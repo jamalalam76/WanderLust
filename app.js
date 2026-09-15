@@ -14,7 +14,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
 const User = require("./models/user.js");
+const Listing = require("./models/listing.js");
 const ExpressError = require("./utils/ExpressError.js");
+const { initDB } = require("./init/index.js");
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
@@ -22,28 +24,27 @@ const userRouter = require("./routes/user.js");
 const paymentRouter = require("./routes/payment.js");
 const aiRouter = require("./routes/ai.js");
 
-// Fallback to Cloud MongoDB Atlas when process.env.MONGO_URL is not set
-const cloudDbUrl = "mongodb+srv://wanderlust_user:Wanderlust2026Secure@cluster0.mongodb.net/wanderlust?retryWrites=true&w=majority";
-const dbUrl = process.env.MONGO_URL || cloudDbUrl;
-
-main()
-  .then(() => {
-    console.log("Connected to MongoDB database successfully");
-  })
-  .catch((err) => {
-    console.log("Database connection error:", err);
-  });
+// Database URL from Environment Variable or Local MongoDB
+const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 async function main() {
   try {
-    await mongoose.connect(dbUrl);
-  } catch(e) {
-    console.log("Primary DB connection failed, attempting Atlas fallback...", e.message);
-    if (dbUrl !== cloudDbUrl) {
-      await mongoose.connect(cloudDbUrl);
+    await mongoose.connect(dbUrl, { serverSelectionTimeoutMS: 5000 });
+    console.log("Connected to MongoDB successfully!");
+    
+    // Auto-seed database if fresh or empty
+    const count = await Listing.countDocuments();
+    if (count === 0) {
+      console.log("Empty database detected. Auto-seeding listings...");
+      await initDB(false);
     }
+  } catch (err) {
+    console.error("Database connection error:", err.message);
+    console.log("⚠️ If running on Render, make sure to add MONGO_URL in Render Dashboard Environment variables.");
   }
 }
+
+main();
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

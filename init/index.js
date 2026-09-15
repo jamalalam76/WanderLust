@@ -63,16 +63,22 @@ const cityCoords = {
   "Maldives": [73.2207, 3.2028],
 };
 
-const initDB = async () => {
+const initDB = async (closeConn = true) => {
   await Listing.deleteMany({});
   await User.deleteMany({ username: "demouser" });
 
   // Create default admin/host user
-  const demoUser = new User({
-    email: "demo@wanderlust.com",
-    username: "demouser",
-  });
-  const registeredUser = await User.register(demoUser, "demo123");
+  let registeredUser;
+  const existingUser = await User.findOne({ username: "demouser" });
+  if (existingUser) {
+    registeredUser = existingUser;
+  } else {
+    const demoUser = new User({
+      email: "demo@wanderlust.com",
+      username: "demouser",
+    });
+    registeredUser = await User.register(demoUser, "demo123");
+  }
 
   const seededData = initData.data.map((obj, idx) => ({
     ...obj,
@@ -87,5 +93,9 @@ const initDB = async () => {
 
   await Listing.insertMany(seededData);
   console.log("Database initialized successfully with Goa sample listings!");
-  mongoose.connection.close();
+  if (closeConn) {
+    mongoose.connection.close();
+  }
 };
+
+module.exports = { initDB };
