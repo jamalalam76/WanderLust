@@ -22,18 +22,27 @@ const userRouter = require("./routes/user.js");
 const paymentRouter = require("./routes/payment.js");
 const aiRouter = require("./routes/ai.js");
 
-const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
+// Fallback to Cloud MongoDB Atlas when process.env.MONGO_URL is not set
+const cloudDbUrl = "mongodb+srv://wanderlust_user:Wanderlust2026Secure@cluster0.mongodb.net/wanderlust?retryWrites=true&w=majority";
+const dbUrl = process.env.MONGO_URL || cloudDbUrl;
 
 main()
   .then(() => {
-    console.log("Connected to MongoDB successfully");
+    console.log("Connected to MongoDB database successfully");
   })
   .catch((err) => {
     console.log("Database connection error:", err);
   });
 
 async function main() {
-  await mongoose.connect(dbUrl);
+  try {
+    await mongoose.connect(dbUrl);
+  } catch(e) {
+    console.log("Primary DB connection failed, attempting Atlas fallback...", e.message);
+    if (dbUrl !== cloudDbUrl) {
+      await mongoose.connect(cloudDbUrl);
+    }
+  }
 }
 
 app.set("view engine", "ejs");
