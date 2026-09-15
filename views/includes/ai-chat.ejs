@@ -1,0 +1,139 @@
+<!-- WanderBot AI Assistant Floating Button & Widget -->
+<div class="wanderbot-widget position-fixed bottom-0 end-0 me-4 mb-4" style="z-index: 9999;">
+  
+  <!-- Toggle Floating Button -->
+  <button id="wanderbotToggleBtn" class="btn btn-danger rounded-circle shadow-lg d-flex align-items-center justify-content-center p-3 btn-gradient border-0 text-white" style="width: 58px; height: 58px;" onclick="toggleWanderBotWindow()" title="Chat with WanderBot AI">
+    <i class="fa-solid fa-wand-magic-sparkles fs-4"></i>
+  </button>
+
+  <!-- Chat Window Box -->
+  <div id="wanderbotWindow" class="card shadow-lg border-0 rounded-4 overflow-hidden display-none position-absolute bottom-100 end-0 mb-3" style="width: 350px; max-height: 480px;">
+    
+    <!-- Chat Header -->
+    <div class="card-header bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid fa-robot text-danger fs-5"></i>
+        <div>
+          <h6 class="mb-0 fw-bold">WanderBot AI Assistant</h6>
+          <small class="text-success" style="font-size: 11px;"><i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i>Online &bull; Gemini 2.5 AI</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white small" onclick="toggleWanderBotWindow()"></button>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="wanderbotMessages" class="card-body p-3 overflow-y-auto bg-light" style="height: 320px;">
+      <div class="d-flex align-items-start gap-2 mb-3">
+        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 12px;">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="bg-white p-2 px-3 rounded-4 shadow-sm text-dark small" style="max-width: 85%;">
+          Hello! I am <b>WanderBot AI</b>. Ask me for 3-day travel itineraries, local food tips, or trip packing lists! ✨
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input Form -->
+    <div class="card-footer bg-white p-2">
+      <form id="wanderbotForm" onsubmit="handleWanderBotSubmit(event)">
+        <div class="input-group">
+          <input type="text" id="wanderbotInput" class="form-control form-control-sm border-0 bg-light rounded-pill ps-3" placeholder="Ask AI anything about travel..." required>
+          <button class="btn btn-danger btn-sm rounded-pill px-3 ms-1 btn-gradient" type="submit">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- WanderBot AI Client Script -->
+<script>
+  function toggleWanderBotWindow() {
+    const win = document.getElementById("wanderbotWindow");
+    if (win.style.display === "block") {
+      win.style.display = "none";
+    } else {
+      win.style.display = "block";
+      document.getElementById("wanderbotInput").focus();
+    }
+  }
+
+  async function handleWanderBotSubmit(event) {
+    event.preventDefault();
+    const input = document.getElementById("wanderbotInput");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const messagesContainer = document.getElementById("wanderbotMessages");
+
+    // Render User Message
+    messagesContainer.innerHTML += `
+      <div class="d-flex justify-content-end mb-3">
+        <div class="bg-danger text-white p-2 px-3 rounded-4 shadow-sm small" style="max-width: 85%;">
+          ${escapeHtml(msg)}
+        </div>
+      </div>
+    `;
+    input.value = "";
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Render AI Typing Indicator
+    const typingId = "typing_" + Date.now();
+    messagesContainer.innerHTML += `
+      <div id="${typingId}" class="d-flex align-items-start gap-2 mb-3">
+        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 12px;">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="bg-white p-2 px-3 rounded-4 shadow-sm text-muted small">
+          <i class="fa-solid fa-circle-notch fa-spin me-1"></i> WanderBot AI is thinking...
+        </div>
+      </div>
+    `;
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    try {
+      const res = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      
+      document.getElementById(typingId).remove();
+      
+      const replyText = data.success ? data.reply : "WanderBot AI is temporary unavailable.";
+      messagesContainer.innerHTML += `
+        <div class="d-flex align-items-start gap-2 mb-3">
+          <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 12px;">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="bg-white p-2 px-3 rounded-4 shadow-sm text-dark small" style="max-width: 85%; white-space: pre-line;">
+            ${escapeHtml(replyText)}
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      document.getElementById(typingId).remove();
+      messagesContainer.innerHTML += `
+        <div class="d-flex align-items-start gap-2 mb-3">
+          <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 12px;">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="bg-white p-2 px-3 rounded-4 shadow-sm text-danger small">
+            Network error. Please try again.
+          </div>
+        </div>
+      `;
+    }
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+  }
+</script>

@@ -1,0 +1,59 @@
+<nav class="navbar navbar-expand-md sticky-top bg-white border-bottom shadow-sm py-2">
+    <div class="container-fluid px-md-4">
+        <!-- Brand Logo -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/listings">
+            <i class="fa-regular fa-compass brand-icon fs-2"></i>
+            <span class="brand-text fw-bold fs-4 text-gradient">Wanderlust</span>
+        </a>
+
+        <!-- Mobile Toggler -->
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            
+            <!-- Search Bar in Navbar -->
+            <form class="d-flex mx-auto search-form my-2 my-md-0" action="/listings" method="GET">
+                <div class="input-group search-pill rounded-pill overflow-hidden border shadow-sm">
+                    <input class="form-control border-0 ps-4 py-2 bg-transparent" type="search" name="search" placeholder="Search destinations, villas, cities..." value="<%= (locals.search && typeof locals.search === 'string') ? locals.search : '' %>">
+                    <button class="btn btn-search px-4 text-white" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Nav Action Buttons -->
+            <div class="navbar-nav ms-auto align-items-md-center gap-2">
+                <a class="nav-link fw-semibold px-3 text-dark rounded-pill hover-bg" href="/listings/new">
+                    <i class="fa-solid fa-plus text-danger me-1"></i> Wanderlust your home
+                </a>
+
+                <% if(!locals.currentUser) { %>
+                    <a class="btn btn-outline-dark rounded-pill px-4 me-2 fw-semibold" href="/login">Log in</a>
+                    <a class="btn btn-dark rounded-pill px-4 fw-semibold text-white btn-gradient" href="/signup">Sign up</a>
+                <% } else { %>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary rounded-pill dropdown-toggle d-flex align-items-center gap-2 px-3 py-1 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-bars fs-6"></i>
+                            <div class="user-avatar bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 14px;">
+                                <%= locals.currentUser.username.charAt(0).toUpperCase() %>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 border-0 mt-2 p-2">
+                            <li class="px-3 py-2 border-bottom">
+                                <span class="d-block fw-bold"><%= locals.currentUser.username %></span>
+                                <small class="text-muted"><%= locals.currentUser.email %></small>
+                            </li>
+                            <li><a class="dropdown-item rounded-3 py-2 my-1" href="/listings/new"><i class="fa-solid fa-house-medical me-2 text-danger"></i> Add New Listing</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item rounded-3 py-2 text-danger fw-semibold" href="/logout"><i class="fa-solid fa-right-from-bracket me-2"></i> Log out</a></li>
+                        </ul>
+                    </div>
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+</nav>

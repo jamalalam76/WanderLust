@@ -1,0 +1,133 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Category Pills Slider & Tax Switch Bar -->
+<div class="category-container d-flex align-items-center justify-content-between my-3 flex-wrap gap-3">
+  
+  <div class="filters d-flex align-items-center gap-4 overflow-x-auto py-2 pe-3 flex-grow-1 border-0">
+    <a href="/listings" class="filter text-decoration-none text-dark text-center <%= (!locals.category || locals.category === 'All') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-fire fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Trending</p>
+    </a>
+    <a href="/listings?category=Rooms" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Rooms') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-bed fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Rooms</p>
+    </a>
+    <a href="/listings?category=Iconic Cities" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Iconic Cities') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-mountain-city fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Iconic Cities</p>
+    </a>
+    <a href="/listings?category=Mountains" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Mountains') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-mountain fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Mountains</p>
+    </a>
+    <a href="/listings?category=Castles" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Castles') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-fort-awesome fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Castles</p>
+    </a>
+    <a href="/listings?category=Amazing Pools" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Amazing Pools') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-person-swimming fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Amazing Pools</p>
+    </a>
+    <a href="/listings?category=Camping" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Camping') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-campground fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Camping</p>
+    </a>
+    <a href="/listings?category=Farms" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Farms') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-cow fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Farms</p>
+    </a>
+    <a href="/listings?category=Arctic" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Arctic') ? 'active-filter' : '' %>">
+      <div><i class="fa-regular fa-snowflake fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Arctic</p>
+    </a>
+    <a href="/listings?category=Beachfront" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Beachfront') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-umbrella-beach fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Beachfront</p>
+    </a>
+    <a href="/listings?category=Villas" class="filter text-decoration-none text-dark text-center <%= (locals.category === 'Villas') ? 'active-filter' : '' %>">
+      <div><i class="fa-solid fa-house-chimney-window fs-5"></i></div>
+      <p class="small mb-0 fw-semibold">Villas</p>
+    </a>
+  </div>
+
+  <!-- GST Tax Toggle Switch -->
+  <div class="tax-toggle border rounded-pill px-3 py-2 d-flex align-items-center shadow-sm bg-white">
+    <div class="form-check form-switch form-check-reverse m-0 cursor-pointer">
+      <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+      <label class="form-check-label fw-semibold small cursor-pointer" for="flexSwitchCheckDefault">Display total after taxes</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- Search Results Status Header -->
+<% if (locals.search && locals.search.trim() !== '') { %>
+  <div class="d-flex align-items-center justify-content-between my-3">
+    <h4 class="fw-bold">Search results for "<%= locals.search %>"</h4>
+    <a href="/listings" class="btn btn-sm btn-outline-dark rounded-pill">Clear Search</a>
+  </div>
+<% } %>
+
+<!-- Listing Cards Grid -->
+<% if (allListings.length === 0) { %>
+  <div class="text-center my-5 py-5">
+    <i class="fa-solid fa-magnifying-glass-location fa-3x text-muted mb-3"></i>
+    <h3>No listings found</h3>
+    <p class="text-muted">Try adjusting your search or category filter to find what you're looking for.</p>
+    <a href="/listings" class="btn btn-dark rounded-pill px-4">Explore All Listings</a>
+  </div>
+<% } else { %>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4 my-2">
+    <% for(let listing of allListings) { %>
+      <div class="col">
+        <a href="/listings/<%= listing._id %>" class="listing-link text-decoration-none">
+          <div class="card listing-card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
+            
+            <div class="img-container position-relative overflow-hidden" style="height: 18rem;">
+              <img
+                src="<%= listing.image && listing.image.url ? listing.image.url : 'https://images.unsplash.com/photo-1625505826533-5c80aca7d157?auto=format&fit=crop&w=800&q=60' %>"
+                class="card-img-top w-100 h-100 object-fit-cover card-hover-zoom"
+                alt="<%= listing.title %>"
+              >
+              <div class="card-img-overlay d-flex justify-content-end align-items-start p-3">
+                <button class="wishlist-btn btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center p-2" onclick="event.preventDefault(); this.querySelector('i').classList.toggle('fa-solid'); this.querySelector('i').classList.toggle('text-danger');">
+                  <i class="fa-regular fa-heart fs-6"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title fw-bold mb-1 text-dark text-truncate" style="max-width: 80%;"><%= listing.title %></h5>
+                <span class="badge bg-light text-dark border rounded-pill"><i class="fa-solid fa-star text-warning me-1"></i> 4.9</span>
+              </div>
+              <p class="text-muted small mb-1 text-truncate"><%= listing.location %>, <%= listing.country %></p>
+              <div class="card-text fw-bold text-dark mt-2">
+                &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : 0 %> <span class="fw-normal text-muted small">/ night</span>
+                <i class="tax-info text-danger small fw-normal ms-1 display-none">&nbsp; &nbsp;+18% GST (&#8377; <%= (listing.price * 1.18).toLocaleString("en-IN") %>)</i>
+              </div>
+            </div>
+
+          </div>
+        </a>
+      </div>
+    <% } %>
+  </div>
+<% } %>
+
+<!-- GST Tax Toggle Script -->
+<script>
+  const taxSwitch = document.getElementById("flexSwitchCheckDefault");
+  if(taxSwitch) {
+    taxSwitch.addEventListener("click", () => {
+      const taxInfo = document.getElementsByClassName("tax-info");
+      for (let info of taxInfo) {
+        if (info.style.display !== "inline") {
+          info.style.display = "inline";
+        } else {
+          info.style.display = "none";
+        }
+      }
+    });
+  }
+</script>

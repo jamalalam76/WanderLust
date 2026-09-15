@@ -1,0 +1,51 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4 mb-5">
+  <div class="col-12 col-md-6 col-lg-5 mx-auto">
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+      <div class="card-body">
+        <h2 class="card-title fw-bold text-center mb-1">Welcome Back</h2>
+        <p class="text-muted text-center mb-4">Log in with your Username or Email</p>
+
+        <form action="/login" method="POST">
+          <div class="mb-3">
+            <label for="username" class="form-label fw-semibold">Username or Email</label>
+            <input name="username" id="username" type="text" class="form-control form-control-lg rounded-3" placeholder="Enter username or email" required />
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+              <input name="password" id="password" type="password" class="form-control form-control-lg rounded-start-3" placeholder="Enter password" required />
+              <button class="btn btn-outline-secondary px-3 rounded-end-3" type="button" id="togglePasswordBtn" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')">
+                <i class="fa-solid fa-eye-slash" id="togglePasswordIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-dark btn-lg w-100 rounded-pill btn-gradient fw-bold mb-3">Log In</button>
+        </form>
+
+        <div class="text-center text-muted">
+          Don't have an account? <a href="/signup" class="text-danger text-decoration-none fw-bold">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePasswordVisibility(inputId, iconId) {
+    const pwdInput = document.getElementById(inputId);
+    const pwdIcon = document.getElementById(iconId);
+    if (pwdInput.type === "password") {
+      pwdInput.type = "text";
+      pwdIcon.classList.remove("fa-eye-slash");
+      pwdIcon.classList.add("fa-eye");
+    } else {
+      pwdInput.type = "password";
+      pwdIcon.classList.remove("fa-eye");
+      pwdIcon.classList.add("fa-eye-slash");
+    }
+  }
+</script>

@@ -1,0 +1,153 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row">
+  <div class="col-8 offset-2">
+
+    <br>
+    <br>
+
+    <h3>Create a New Listing</h3>
+
+    <form method="POST" action="/listings" enctype="multipart/form-data">
+
+      <div class="mb-3">
+        <label for="title" class="form-label fw-semibold">Title</label>
+        <input
+          name="listing[title]"
+          id="listingTitle"
+          placeholder="Add a catchy title (e.g. Cozy Beach Villa)"
+          type="text"
+          class="form-control"
+          required
+        />
+        <div class="valid-feedback">Title looks good!</div>
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label for="description" class="form-label fw-semibold mb-0">Description</label>
+          <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="generateDescriptionWithAI()">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate with AI
+          </button>
+        </div>
+        <textarea
+          name="listing[description]"
+          id="listingDescription"
+          placeholder="Enter a detailed description or click 'Generate with AI'"
+          class="form-control"
+          required
+          rows="4"
+        ></textarea>
+        <div id="aiStatus" class="small text-danger fw-semibold mt-1 display-none">
+          <i class="fa-solid fa-circle-notch fa-spin me-1"></i> Generating AI description...
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label fw-semibold">Upload Listing Image (Cloudinary)</label>
+        <input
+          name="listing[image]"
+          type="file"
+          class="form-control"
+          accept="image/*"
+        />
+        <small class="text-muted">Choose an image file from your device to upload to Cloudinary cloud storage.</small>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label fw-semibold">Category</label>
+        <select name="listing[category]" id="listingCategory" class="form-select">
+          <option value="Trending" selected>Trending</option>
+          <option value="Rooms">Rooms</option>
+          <option value="Iconic Cities">Iconic Cities</option>
+          <option value="Mountains">Mountains</option>
+          <option value="Castles">Castles</option>
+          <option value="Amazing Pools">Amazing Pools</option>
+          <option value="Camping">Camping</option>
+          <option value="Farms">Farms</option>
+          <option value="Arctic">Arctic</option>
+          <option value="Beachfront">Beachfront</option>
+          <option value="Villas">Villas</option>
+        </select>
+      </div>
+
+      <div class="row">
+
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label fw-semibold">Price (&#8377;)</label>
+          <input
+            name="listing[price]"
+            placeholder="1200"
+            type="number"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label fw-semibold">Country</label>
+          <input
+            name="listing[country]"
+            id="listingCountry"
+            placeholder="India"
+            type="text"
+            class="form-control"
+            required
+          />
+        </div>
+
+      </div>
+
+      <div class="mb-3">
+        <label for="location" class="form-label fw-semibold">Location / City</label>
+        <input
+          name="listing[location]"
+          id="listingLocation"
+          placeholder="Goa, Mumbai, Delhi"
+          type="text"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <button class="btn btn-dark add-btn rounded-pill px-4 fw-bold">Add Listing</button>
+
+      <br>
+      <br>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+  async function generateDescriptionWithAI() {
+    const title = document.getElementById("listingTitle").value.trim();
+    const location = document.getElementById("listingLocation").value.trim();
+    const country = document.getElementById("listingCountry").value.trim();
+    const category = document.getElementById("listingCategory").value;
+    const aiStatus = document.getElementById("aiStatus");
+    const descInput = document.getElementById("listingDescription");
+
+    aiStatus.style.display = "block";
+
+    try {
+      const res = await fetch("/api/ai/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, location, country, category })
+      });
+      const data = await res.json();
+      if (data.success && data.description) {
+        descInput.value = data.description;
+      } else {
+        alert("Could not generate AI description.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("AI generation error.");
+    } finally {
+      aiStatus.style.display = "none";
+    }
+  }
+</script>

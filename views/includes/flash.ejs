@@ -1,0 +1,15 @@
+<% if (locals.success && locals.success.length) { %>
+  <div class="alert alert-success alert-dismissible fade show col-6 offset-3 my-3 shadow-sm rounded-4" role="alert">
+    <i class="fa-solid fa-circle-check me-2"></i>
+    <%= locals.success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+
+<% if (locals.error && locals.error.length) { %>
+  <div class="alert alert-danger alert-dismissible fade show col-6 offset-3 my-3 shadow-sm rounded-4" role="alert">
+    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+    <%= locals.error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>

@@ -1,0 +1,181 @@
+:root {
+    --primary-color: #fe424d;
+    --primary-hover: #e0323c;
+    --dark-text: #222222;
+    --light-bg: #f7f7f7;
+}
+
+body {
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+    color: var(--dark-text);
+}
+
+.main-container {
+    flex: 1;
+}
+
+/* Brand styling */
+.brand-icon {
+    color: var(--primary-color);
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #fe424d, #e61e4d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #fe424d, #e61e4d) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.btn-gradient:hover {
+    opacity: 0.95;
+}
+
+/* Navbar Search Pill */
+.search-pill {
+    width: 320px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.search-pill:focus-within {
+    width: 380px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+}
+
+.btn-search {
+    background-color: var(--primary-color);
+    border-radius: 0 50px 50px 0 !important;
+}
+
+.btn-search:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Category Filters Bar */
+.category-container {
+    border-bottom: 1px solid #ebebeb;
+    padding-bottom: 0.5rem;
+}
+
+.filters {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.filters::-webkit-scrollbar {
+    display: none;
+}
+
+.filter {
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+.filter:hover {
+    opacity: 1;
+    border-bottom: 2px solid #222222;
+    cursor: pointer;
+}
+
+.active-filter {
+    opacity: 1 !important;
+    border-bottom: 2px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Listing Cards */
+.listing-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+.listing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1) !important;
+}
+
+.card-hover-zoom {
+    transition: transform 0.4s ease;
+}
+
+.listing-card:hover .card-hover-zoom {
+    transform: scale(1.05);
+}
+
+.wishlist-btn {
+    opacity: 0.9;
+    transition: transform 0.2s ease;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.15);
+    opacity: 1;
+}
+
+/* Starability Rating Basic CSS */
+.starability-basic {
+    display: block;
+    position: relative;
+    min-height: 30px;
+}
+
+.starability-basic input {
+    position: absolute;
+    margin-right: -100%;
+    opacity: 0;
+}
+
+.starability-basic label {
+    float: right;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 24px;
+    color: #ccc;
+}
+
+.starability-basic label:before {
+    content: '★';
+}
+
+.starability-basic input:checked ~ label,
+.starability-basic label:hover,
+.starability-basic label:hover ~ label {
+    color: #ffb400;
+}
+
+/* Leaflet Map Styling */
+#map {
+    border-radius: 1rem;
+    z-index: 1;
+}
+
+/* Helper Utilities */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.display-none {
+    display: none;
+}
+
+.hover-bg:hover {
+    background-color: var(--light-bg);
+}
+
+.hover-underline:hover {
+    text-decoration: underline !important;
+}
