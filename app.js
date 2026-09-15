@@ -27,6 +27,9 @@ const aiRouter = require("./routes/ai.js");
 // Database URL from Environment Variable or Local MongoDB
 const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
+// Disable query buffering to prevent 502 Bad Gateway timeouts when DB is disconnected
+mongoose.set("bufferCommands", false);
+
 async function main() {
   try {
     await mongoose.connect(dbUrl, { serverSelectionTimeoutMS: 5000 });
