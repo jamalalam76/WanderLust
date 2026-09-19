@@ -27,22 +27,21 @@ const aiRouter = require("./routes/ai.js");
 // Database URL from Environment Variable or Local MongoDB
 const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
-// Disable query buffering to prevent 502 Bad Gateway timeouts when DB is disconnected
-mongoose.set("bufferCommands", false);
-
 async function main() {
   try {
     await mongoose.connect(dbUrl, { serverSelectionTimeoutMS: 5000 });
     console.log("Connected to MongoDB successfully!");
     
     // Auto-seed database if fresh or empty
-    const count = await Listing.countDocuments();
-    if (count === 0) {
-      console.log("Empty database detected. Auto-seeding listings...");
-      await initDB(false);
+    if (mongoose.connection.readyState === 1) {
+      const count = await Listing.countDocuments();
+      if (count === 0) {
+        console.log("Empty database detected. Auto-seeding listings...");
+        await initDB(false);
+      }
     }
   } catch (err) {
-    console.error("Database connection error:", err.message);
+    console.error("Database connection note:", err.message);
     console.log("⚠️ If running on Render, make sure to add MONGO_URL in Render Dashboard Environment variables.");
   }
 }
