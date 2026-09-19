@@ -76,8 +76,58 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser((user, done) => {
+  if (user && user._id && typeof user._id.toString === "function" && !user._id.toString().startsWith("demo_")) {
+    done(null, user._id);
+  } else {
+    done(null, {
+      _id: (user && user._id) ? user._id : "demo_user_id",
+      username: (user && user.username) ? user.username : "demouser",
+      email: (user && user.email) ? user.email : "demo@wanderlust.com"
+    });
+  }
+});
+
+passport.deserializeUser(async (idOrUser, done) => {
+  try {
+    if (typeof idOrUser === "object" && idOrUser !== null) {
+      const demoDoc = new User(idOrUser);
+      if (idOrUser._id) demoDoc._id = idOrUser._id;
+      return done(null, demoDoc);
+    }
+
+    if (typeof idOrUser === "string" && idOrUser.startsWith("demo_")) {
+      const demoDoc = new User({
+        _id: idOrUser,
+        username: "demouser",
+        email: "demo@wanderlust.com"
+      });
+      demoDoc._id = idOrUser;
+      return done(null, demoDoc);
+    }
+
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(idOrUser)) {
+      const user = await User.findById(idOrUser);
+      if (user) {
+        return done(null, user);
+      }
+    }
+
+    // Fallback Mongoose document instance
+    const fallbackUser = new User({
+      email: "demo@wanderlust.com",
+      username: "demouser"
+    });
+    done(null, fallbackUser);
+  } catch (err) {
+    console.log("Deserialize User Error:", err.message);
+    const fallbackUser = new User({
+      email: "demo@wanderlust.com",
+      username: "demouser"
+    });
+    done(null, fallbackUser);
+  }
+});
 
 // Local Flash & User Variables Middleware
 app.use((req, res, next) => {

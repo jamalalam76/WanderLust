@@ -21,11 +21,11 @@ module.exports.signup = async (req, res, next) => {
     }
 
     // Demo Mode Fallback Signup (when DB not connected)
-    const demoUser = {
-      _id: "demo_user_id",
-      username: username || "demouser",
-      email: email || "demo@wanderlust.com"
-    };
+    const demoUser = new User({
+      email: email || "demo@wanderlust.com",
+      username: username || "demouser"
+    });
+    demoUser._id = "demo_user_id";
     req.login(demoUser, (err) => {
       if (err) return next(err);
       req.flash("success", `Welcome to WanderLust, ${demoUser.username}!`);
@@ -47,11 +47,11 @@ module.exports.login = (req, res, next) => {
 
   if (mongoose.connection.readyState !== 1) {
     // Demo Mode Fallback Login (when DB not connected)
-    const demoUser = {
-      _id: "demo_user_id",
-      username: username || "demouser",
-      email: "demo@wanderlust.com"
-    };
+    const demoUser = new User({
+      email: "demo@wanderlust.com",
+      username: username || "demouser"
+    });
+    demoUser._id = "demo_user_id";
     return req.login(demoUser, (loginErr) => {
       if (loginErr) return next(loginErr);
       req.flash("success", `Welcome back to WanderLust, ${demoUser.username}!`);
