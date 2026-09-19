@@ -2,34 +2,59 @@ const mongoose = require("mongoose");
 const Listing = require("../models/listing");
 const sampleData = require("../init/data.js");
 
+const categoriesList = [
+  "Beachfront",
+  "Villas",
+  "Rooms",
+  "Iconic Cities",
+  "Mountains",
+  "Castles",
+  "Amazing Pools",
+  "Camping",
+  "Farms",
+  "Arctic",
+  "Trending"
+];
+
 const getFallbackListings = (query = {}) => {
-  let data = sampleData.data.map((item, index) => ({
-    _id: `demo_${index + 1}`,
-    title: item.title,
-    description: item.description,
-    image: item.image,
-    price: item.price,
-    location: item.location,
-    country: item.country,
-    owner: { username: "demouser", email: "demo@wanderlust.com" },
-    category: item.location === "Goa" ? "Beachfront" : (index % 2 === 0 ? "Villas" : "Trending"),
-    reviews: [],
-    amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen"],
-    geometry: { type: "Point", coordinates: [73.8567, 15.2993] }
-  }));
+  let data = sampleData.data.map((item, index) => {
+    let cat = item.location === "Goa" ? "Beachfront" : categoriesList[index % categoriesList.length];
+    return {
+      _id: `demo_${index + 1}`,
+      title: item.title,
+      description: item.description,
+      image: item.image,
+      price: item.price,
+      location: item.location,
+      country: item.country,
+      owner: { username: "demouser", email: "demo@wanderlust.com" },
+      category: cat,
+      reviews: [],
+      amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Pool"],
+      geometry: { type: "Point", coordinates: [73.8567, 15.2993] }
+    };
+  });
 
   const { category, search } = query;
-  if (category && category !== "All") {
-    data = data.filter(item => item.category === category || (category === "Beachfront" && item.location === "Goa"));
+
+  if (category && category !== "All" && category !== "Trending") {
+    data = data.filter(item => 
+      item.category.toLowerCase() === category.trim().toLowerCase() ||
+      (category.toLowerCase() === "beachfront" && item.location.toLowerCase() === "goa")
+    );
   }
+
   if (search && search.trim() !== "") {
     const q = search.trim().toLowerCase();
     data = data.filter(item => 
       item.title.toLowerCase().includes(q) ||
       item.location.toLowerCase().includes(q) ||
-      item.country.toLowerCase().includes(q)
+      item.country.toLowerCase().includes(q) ||
+      (item.category && item.category.toLowerCase().includes(q)) ||
+      (item.description && item.description.toLowerCase().includes(q))
     );
   }
+
   return data;
 };
 
@@ -37,8 +62,8 @@ module.exports.index = async (req, res) => {
   const { category, search } = req.query;
   let filter = {};
 
-  if (category && category !== "All") {
-    filter.category = category;
+  if (category && category !== "All" && category !== "Trending") {
+    filter.category = new RegExp(`^${category.trim()}$`, "i");
   }
 
   if (search && search.trim() !== "") {
@@ -48,23 +73,33 @@ module.exports.index = async (req, res) => {
       { location: searchRegex },
       { country: searchRegex },
       { category: searchRegex },
+      { description: searchRegex }
     ];
   }
 
   let allListings = [];
-  try {
-    if (mongoose.connection.readyState === 1) {
+  const isDbConnected = (mongoose.connection.readyState === 1);
+
+  if (isDbConnected) {
+    try {
       allListings = await Listing.find(filter);
-    }
-    if (!allListings || allListings.length === 0) {
+      const totalCount = await Listing.countDocuments();
+      if (totalCount === 0) {
+        allListings = getFallbackListings(req.query);
+      }
+    } catch (err) {
+      console.log("DB Query Fallback triggered:", err.message);
       allListings = getFallbackListings(req.query);
     }
-  } catch (err) {
-    console.log("DB Query Fallback triggered:", err.message);
+  } else {
     allListings = getFallbackListings(req.query);
   }
 
-  res.render("listings/index.ejs", { allListings, category: category || "All", search: search || "" });
+  res.render("listings/index.ejs", { 
+    allListings, 
+    category: category || "All", 
+    search: search || "" 
+  });
 };
 
 module.exports.renderNewForm = (req, res) => {
