@@ -12,25 +12,14 @@ module.exports.signup = async (req, res, next) => {
 
     if (mongoose.connection.readyState === 1) {
       const newUser = new User({ email, username });
-      const registeredUser = await User.register(newUser, password);
-      return req.login(registeredUser, (err) => {
-        if (err) return next(err);
-        req.flash("success", "Welcome to WanderLust!");
-        res.redirect("/listings");
-      });
+      await User.register(newUser, password);
+      req.flash("success", "Account created successfully! Please log in to continue.");
+      return res.redirect("/login");
     }
 
     // Demo Mode Fallback Signup (when DB not connected)
-    const demoUser = new User({
-      email: email || "demo@wanderlust.com",
-      username: username || "demouser"
-    });
-    demoUser._id = "demo_user_id";
-    req.login(demoUser, (err) => {
-      if (err) return next(err);
-      req.flash("success", `Welcome to WanderLust, ${demoUser.username}!`);
-      res.redirect("/listings");
-    });
+    req.flash("success", `Account for "${username || 'demouser'}" created successfully! Please log in.`);
+    res.redirect("/login");
   } catch (e) {
     req.flash("error", e.message);
     res.redirect("/signup");
