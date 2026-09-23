@@ -137,9 +137,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Root Route Redirect
+// Root Route Redirect - First opens /signup for new visitors, then /login -> /listings
 app.get("/", (req, res) => {
-  res.redirect("/listings");
+  if (req.isAuthenticated()) {
+    return res.redirect("/listings");
+  }
+  res.redirect("/signup");
 });
 
 // Modular Routes
