@@ -171,41 +171,50 @@
       </h4>
 
       <!-- Leave a Review Form -->
-      <% if(locals.currentUser) { %>
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-5 bg-light">
-          <h5 class="fw-bold mb-3">Leave a Review</h5>
-          <form action="/listings/<%= listing._id %>/reviews" method="POST">
+      <div id="reviewFormSection">
+        <% if(locals.currentUser) { %>
+          <div class="card border-0 shadow-sm rounded-4 p-4 mb-5 bg-white border">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold m-0"><i class="fa-solid fa-pen-fancy text-danger me-2"></i>Leave a Review</h5>
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fs-6">
+                <i class="fa-solid fa-circle-check me-1"></i> Verified Guest Rating
+              </span>
+            </div>
             
-            <div class="mb-3">
-              <label for="rating" class="form-label fw-semibold">Rating</label>
-              <fieldset class="starability-basic">
-                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                <label for="first-rate1" title="Terrible">1 star</label>
-                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                <label for="first-rate2" title="Not good">2 stars</label>
-                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                <label for="first-rate3" title="Average">3 stars</label>
-                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                <label for="first-rate4" title="Very good">4 stars</label>
-                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                <label for="first-rate5" title="Amazing">5 stars</label>
-              </fieldset>
-            </div>
+            <form action="/listings/<%= listing._id %>/reviews" method="POST">
+              
+              <!-- Rating Range Slider Matching Screenshot -->
+              <div class="mb-4">
+                <label for="ratingRange" class="form-label fw-bold">Rating</label>
+                <input type="range" min="1" max="5" value="5" class="form-range cursor-pointer" id="ratingRange" name="review[rating]" oninput="updateRatingDisplay(this.value)">
+                <div class="d-flex align-items-center justify-content-between mt-2 p-2 rounded-3 bg-light border">
+                  <div class="d-flex align-items-center gap-2">
+                    <span id="starIcons" class="fs-5">⭐⭐⭐⭐⭐</span>
+                    <span id="ratingLabel" class="fw-bold text-dark">5 Stars (Amazing)</span>
+                  </div>
+                  <small class="text-muted">Slide to rate from 1 to 5 stars</small>
+                </div>
+              </div>
 
-            <div class="mb-3">
-              <label for="comment" class="form-label fw-semibold">Comments</label>
-              <textarea name="review[comment]" id="comment" cols="30" rows="3" class="form-control rounded-3" placeholder="Share your experience at this stay..." required></textarea>
-            </div>
+              <!-- Comments Textarea -->
+              <div class="mb-4">
+                <label for="comment" class="form-label fw-bold">Comments</label>
+                <textarea name="review[comment]" id="comment" cols="30" rows="3" class="form-control rounded-3" placeholder="Share your experience, rating, and feedback about this stay..." required></textarea>
+              </div>
 
-            <button class="btn btn-dark rounded-pill px-4 fw-bold">Submit Review</button>
-          </form>
-        </div>
-      <% } else { %>
-        <div class="alert alert-light border rounded-4 p-3 mb-4 text-center">
-          <span class="text-muted">Please <a href="/login" class="fw-bold text-danger text-decoration-none">log in</a> to write a review.</span>
-        </div>
-      <% } %>
+              <button class="btn btn-dark rounded-pill px-4 fw-bold py-2 shadow-sm">
+                <i class="fa-solid fa-paper-plane me-2"></i>Submit Review
+              </button>
+            </form>
+          </div>
+        <% } else { %>
+          <div class="alert alert-light border rounded-4 p-4 mb-5 text-center shadow-sm">
+            <i class="fa-solid fa-lock text-muted fs-3 mb-2 d-block"></i>
+            <h6 class="fw-bold text-dark mb-1">Want to leave a review & rating?</h6>
+            <span class="text-muted">Please <a href="/login" class="fw-bold text-danger text-decoration-none">log in</a> or book this stay to share your experience.</span>
+          </div>
+        <% } %>
+      </div>
 
       <!-- All Reviews Grid -->
       <% if(listing.reviews.length > 0) { %>
@@ -276,15 +285,35 @@
         </div>
         <small class="text-muted">Receipt and booking invoice have been sent to your email.</small>
       </div>
-      <div class="modal-footer border-0 pt-0">
-        <button type="button" class="btn btn-dark rounded-pill px-4 w-100 fw-bold" data-bs-dismiss="modal">Done</button>
+      <div class="modal-footer border-0 pt-0 flex-column gap-2">
+        <button type="button" class="btn btn-warning rounded-pill px-4 w-100 fw-bold text-dark border-0 py-2 shadow-sm" onclick="scrollToReviewForm()">
+          <i class="fa-solid fa-star me-2"></i>Leave a Review & Rating Now ⭐
+        </button>
+        <button type="button" class="btn btn-outline-dark rounded-pill px-4 w-100 fw-semibold" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Seamless Instant Payment Verification Script -->
+<!-- Dynamic Rating & Booking Verification Scripts -->
 <script>
+  function updateRatingDisplay(val) {
+    const starContainer = document.getElementById("starIcons");
+    const labelContainer = document.getElementById("ratingLabel");
+    
+    const stars = "⭐".repeat(val);
+    const labels = {
+      1: "1 Star (Terrible)",
+      2: "2 Stars (Not Good)",
+      3: "3 Stars (Average)",
+      4: "4 Stars (Very Good)",
+      5: "5 Stars (Amazing)"
+    };
+    
+    if (starContainer) starContainer.innerText = stars;
+    if (labelContainer) labelContainer.innerText = labels[val] || (val + " Stars");
+  }
+
   function payWithRazorpay(amount) {
     const randomPayId = "pay_rzp_" + Math.random().toString(36).substring(2, 10).toUpperCase();
     showDemoSuccessModal(randomPayId);
@@ -292,8 +321,26 @@
 
   function showDemoSuccessModal(payId) {
     document.getElementById("displayPaymentId").innerText = payId;
-    const successModal = new bootstrap.Modal(document.getElementById('paymentSuccessModal'));
+    const modalEl = document.getElementById('paymentSuccessModal');
+    const successModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
     successModal.show();
+  }
+
+  function scrollToReviewForm() {
+    const modalEl = document.getElementById('paymentSuccessModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
+    
+    setTimeout(() => {
+      const reviewSection = document.getElementById('reviewFormSection');
+      if (reviewSection) {
+        reviewSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const commentBox = document.getElementById('comment');
+        if (commentBox) commentBox.focus();
+      }
+    }, 300);
   }
 
   // Leaflet Map Script
