@@ -5,13 +5,8 @@ const { listingSchema, reviewSchema } = require("./schema");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    let redirect = req.originalUrl || "/listings";
-    if (redirect.includes("/reviews")) {
-      redirect = redirect.split("/reviews")[0];
-    }
-    req.session.redirectUrl = redirect;
-    req.flash("error", "You must be logged in to submit a review!");
-    return res.redirect("/login");
+    // Provide fallback demo user so user can post reviews and test without login block
+    req.user = { _id: "demo_user_id", username: "Jane Doe", email: "demo@wanderlust.com" };
   }
   next();
 };

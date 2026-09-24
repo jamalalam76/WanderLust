@@ -16,11 +16,53 @@ const categoriesList = [
   "Trending"
 ];
 
+const { demoReviewsMap } = require("./reviews");
+
+const defaultSampleReviews = [
+  {
+    _id: "demo_rev_1",
+    author: { username: "Jane Doe" },
+    comment: "Excellent experience, must visit for all!",
+    rating: 5,
+    createdAt: new Date()
+  },
+  {
+    _id: "demo_rev_2",
+    author: { username: "Jane Doe" },
+    comment: "very poor staff, not good at all",
+    rating: 1,
+    createdAt: new Date()
+  },
+  {
+    _id: "demo_rev_3",
+    author: { username: "Jane Doe" },
+    comment: "Great place for a vacation!",
+    rating: 4,
+    createdAt: new Date()
+  },
+  {
+    _id: "demo_rev_4",
+    author: { username: "Jane Doe" },
+    comment: "Must visit",
+    rating: 5,
+    createdAt: new Date()
+  },
+  {
+    _id: "demo_rev_5",
+    author: { username: "Jane Doe" },
+    comment: "poor location, not easy to reach, lots of noise",
+    rating: 2,
+    createdAt: new Date()
+  }
+];
+
 const getFallbackListings = (query = {}) => {
   let data = sampleData.data.map((item, index) => {
     let cat = item.location === "Goa" ? "Beachfront" : categoriesList[index % categoriesList.length];
+    const listingId = `demo_${index + 1}`;
+    const extraReviews = demoReviewsMap[listingId] || [];
     return {
-      _id: `demo_${index + 1}`,
+      _id: listingId,
       title: item.title,
       description: item.description,
       image: item.image,
@@ -29,7 +71,7 @@ const getFallbackListings = (query = {}) => {
       country: item.country,
       owner: { username: "demouser", email: "demo@wanderlust.com" },
       category: cat,
-      reviews: [],
+      reviews: [...defaultSampleReviews, ...extraReviews],
       amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Pool"],
       geometry: { type: "Point", coordinates: [73.8567, 15.2993] }
     };
@@ -126,6 +168,13 @@ module.exports.showListing = async (req, res) => {
   if (!listing) {
     const fallbackListings = getFallbackListings();
     listing = fallbackListings.find(l => l._id === id) || fallbackListings[0];
+  } else {
+    const extraReviews = demoReviewsMap[id] || [];
+    if (!listing.reviews || listing.reviews.length === 0) {
+      listing.reviews = [...defaultSampleReviews, ...extraReviews];
+    } else {
+      listing.reviews = [...listing.reviews, ...extraReviews];
+    }
   }
 
   if (!listing) {
