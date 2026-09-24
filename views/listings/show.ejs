@@ -282,6 +282,8 @@
 
 <!-- Dynamic Rating & Booking Verification Scripts -->
 <script>
+  const loggedInUsername = "<%= (locals.currentUser && locals.currentUser.username) ? locals.currentUser.username : 'Guest User' %>";
+
   function postReviewNow() {
     const commentInput = document.getElementById("comment");
     const ratingInput = document.getElementById("ratingRange");
@@ -294,6 +296,8 @@
       return;
     }
 
+    const displayAuthor = (loggedInUsername && loggedInUsername !== 'Guest User') ? loggedInUsername : 'Guest User';
+
     const reviewsContainer = document.getElementById("reviewsGrid");
     if (reviewsContainer) {
       const newCol = document.createElement("div");
@@ -302,7 +306,7 @@
         <div class="card h-100 border rounded-4 p-3 shadow-sm bg-white border-2 border-danger">
           <div class="card-body p-1">
             <h5 class="card-title fw-bold mb-2 d-flex justify-content-between align-items-center">
-              <span>Jane Doe</span>
+              <span>${escapeHtml(displayAuthor)}</span>
               <span class="badge bg-danger-subtle text-danger fs-6 fw-normal"><i class="fa-solid fa-star text-warning me-1"></i>New Review</span>
             </h5>
             <p class="card-text text-dark mb-2 fs-6 fw-medium">${escapeHtml(commentText)}</p>
