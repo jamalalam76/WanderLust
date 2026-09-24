@@ -178,11 +178,11 @@
           <!-- Rating Range Slider -->
           <div class="mb-4">
             <label for="ratingRange" class="form-label fw-bold">Rating</label>
-            <input type="range" min="1" max="5" value="5" class="form-range cursor-pointer" id="ratingRange" name="review[rating]" oninput="updateRatingDisplay(this.value)">
+            <input type="range" min="1" max="5" value="1" class="form-range cursor-pointer" id="ratingRange" name="review[rating]" oninput="updateRatingDisplay(this.value)">
             <div class="d-flex align-items-center justify-content-between mt-2 p-2 px-3 rounded-3 bg-light border">
               <div class="d-flex align-items-center gap-2">
-                <span id="starIcons" class="fs-5">⭐⭐⭐⭐⭐</span>
-                <span id="ratingLabel" class="fw-bold text-dark">5 Stars (Amazing)</span>
+                <span id="starIcons" class="fs-5">⭐</span>
+                <span id="ratingLabel" class="fw-bold text-dark">1 Star (Terrible)</span>
               </div>
               <small class="text-muted">Slide to rate from 1 to 5 stars</small>
             </div>
@@ -322,6 +322,10 @@
     }
 
     if (commentInput) commentInput.value = "";
+    if (ratingInput) {
+      ratingInput.value = "1";
+      updateRatingDisplay(1);
+    }
 
     // Sync POST in background
     const bodyData = new URLSearchParams();
