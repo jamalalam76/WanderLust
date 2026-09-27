@@ -8,7 +8,11 @@
 
     <h3>Create a New Listing</h3>
 
-    <form method="POST" action="/listings" enctype="multipart/form-data">
+    <div id="creatingAlert" class="alert alert-info alert-dismissible fade show d-none my-3 shadow-sm rounded-3" role="alert">
+      <i class="fa-solid fa-circle-notch fa-spin me-2"></i> <strong>Creating a new list...</strong> Please wait while your listing is being saved.
+    </div>
+
+    <form id="createListingForm" method="POST" action="/listings" enctype="multipart/form-data">
 
       <div class="mb-3">
         <label for="title" class="form-label fw-semibold">Title</label>
@@ -43,15 +47,40 @@
         </div>
       </div>
 
-      <div class="mb-3">
-        <label for="image" class="form-label fw-semibold">Upload Listing Image (Cloudinary)</label>
+      <div class="mb-3 p-3 border rounded-3 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <label class="form-label fw-semibold mb-0">Listing Image</label>
+          <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="predictImageWithAI()">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI Auto-Predict Image
+          </button>
+        </div>
+
+        <label for="imageFile" class="small text-muted mb-1">Option 1: Upload Image File (Cloudinary)</label>
         <input
           name="listing[image]"
+          id="imageFile"
           type="file"
-          class="form-control"
+          class="form-control mb-2"
           accept="image/*"
         />
-        <small class="text-muted">Choose an image file from your device to upload to Cloudinary cloud storage.</small>
+
+        <label for="listingImageUrl" class="small text-muted mb-1">Option 2: Image URL (Or click 'AI Auto-Predict Image')</label>
+        <input
+          name="listing[imageUrl]"
+          id="listingImageUrl"
+          placeholder="Paste image link or click 'AI Auto-Predict Image' above"
+          type="text"
+          class="form-control"
+        />
+
+        <div id="aiImageStatus" class="small text-primary fw-semibold mt-2 display-none">
+          <i class="fa-solid fa-circle-notch fa-spin me-1"></i> AI is predicting the best HD image...
+        </div>
+
+        <div id="imagePreviewContainer" class="mt-2 display-none">
+          <small class="text-muted d-block mb-1">AI Image Preview:</small>
+          <img id="imagePreview" src="" alt="AI Suggested Image" class="img-thumbnail rounded-3 shadow-sm" style="max-height: 180px; object-fit: cover;">
+        </div>
       </div>
 
       <div class="mb-3">
@@ -110,7 +139,7 @@
         />
       </div>
 
-      <button class="btn btn-dark add-btn rounded-pill px-4 fw-bold">Add Listing</button>
+      <button id="submitBtn" type="submit" class="btn btn-dark add-btn rounded-pill px-4 fw-bold">Add Listing</button>
 
       <br>
       <br>
@@ -121,6 +150,57 @@
 </div>
 
 <script>
+  document.getElementById("createListingForm").addEventListener("submit", function(e) {
+    const submitBtn = document.getElementById("submitBtn");
+    const creatingAlert = document.getElementById("creatingAlert");
+
+    if (this.checkValidity && !this.checkValidity()) {
+      return;
+    }
+
+    if (creatingAlert) {
+      creatingAlert.classList.remove("d-none");
+    }
+    if (submitBtn) {
+      submitBtn.style.pointerEvents = "none";
+      submitBtn.style.opacity = "0.75";
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Creating a new list...';
+    }
+  });
+
+  async function predictImageWithAI() {
+    const title = document.getElementById("listingTitle").value.trim();
+    const location = document.getElementById("listingLocation").value.trim();
+    const category = document.getElementById("listingCategory").value;
+    const aiImageStatus = document.getElementById("aiImageStatus");
+    const imageUrlInput = document.getElementById("listingImageUrl");
+    const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+    const imagePreview = document.getElementById("imagePreview");
+
+    aiImageStatus.style.display = "block";
+
+    try {
+      const res = await fetch("/api/ai/predict-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, location, category })
+      });
+      const data = await res.json();
+      if (data.success && data.imageUrl) {
+        imageUrlInput.value = data.imageUrl;
+        imagePreview.src = data.imageUrl;
+        imagePreviewContainer.style.display = "block";
+      } else {
+        alert("Could not predict AI image.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("AI image prediction error.");
+    } finally {
+      aiImageStatus.style.display = "none";
+    }
+  }
+
   async function generateDescriptionWithAI() {
     const title = document.getElementById("listingTitle").value.trim();
     const location = document.getElementById("listingLocation").value.trim();

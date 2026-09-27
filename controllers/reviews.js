@@ -44,7 +44,7 @@ module.exports.createReview = async (req, res) => {
     console.log("Review Creation Error:", err.message);
   }
 
-  req.flash("success", "Review & Rating Submitted Successfully! ⭐");
+  req.flash("success", "New Review Created!");
   res.redirect(`/listings/${id}`);
 };
 
@@ -61,7 +61,7 @@ module.exports.destroyReview = async (req, res) => {
   } catch (err) {
     console.log("Review Delete Error:", err.message);
   }
-  req.flash("success", "Review Deleted Successfully!");
+  req.flash("success", "Review Deleted!");
   res.redirect(`/listings/${id}`);
 };
 

@@ -7,12 +7,22 @@ const multer = require("multer");
 const { storage } = require("../cloudConfig");
 const upload = multer({ storage });
 
+const uploadWithFallback = (req, res, next) => {
+  upload.single("listing[image]")(req, res, (err) => {
+    if (err) {
+      console.log("Multer / Cloudinary upload note:", err.message);
+      req.file = null;
+    }
+    next();
+  });
+};
+
 router
   .route("/")
   .get(wrapAsync(listingController.index))
   .post(
     isLoggedIn,
-    upload.single("listing[image]"),
+    uploadWithFallback,
     validateListing,
     wrapAsync(listingController.createListing)
   );
@@ -25,7 +35,7 @@ router
   .put(
     isLoggedIn,
     isOwner,
-    upload.single("listing[image]"),
+    uploadWithFallback,
     validateListing,
     wrapAsync(listingController.updateListing)
   )

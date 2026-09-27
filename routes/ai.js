@@ -5,5 +5,6 @@ const aiController = require("../controllers/ai");
 
 router.post("/generate-description", wrapAsync(aiController.generateDescription));
 router.post("/chat", wrapAsync(aiController.chatWithWanderBot));
+router.post("/predict-image", wrapAsync(aiController.predictImage));
 
 module.exports = router;
