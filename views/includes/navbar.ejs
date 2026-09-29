@@ -24,17 +24,19 @@
                 </div>
             </form>
 
-            <!-- Nav Action Buttons (Matches Delta Course Navbar Exactly) -->
+            <!-- Nav Action Buttons -->
             <div class="navbar-nav ms-auto align-items-md-center gap-2">
                 <a class="nav-link fw-semibold px-3 text-dark rounded-pill hover-bg" href="/listings/new">
                     Wanderlust your home
                 </a>
 
-                <% if(!locals.currentUser) { %>
-                    <a class="nav-link fw-semibold text-dark px-3" href="/signup">Sign up</a>
-                    <a class="nav-link fw-semibold text-dark px-3" href="/login">Log in</a>
-                <% } else { %>
-                    <a class="nav-link fw-semibold text-dark px-3" href="/logout">Log out</a>
+                <% if (!currentUser) { %>
+                    <a class="nav-link fw-bold text-dark px-3" href="/signup">Sign up</a>
+                    <a class="nav-link fw-bold text-dark px-3" href="/login">Log in</a>
+                <% } %>
+
+                <% if (currentUser) { %>
+                    <a class="nav-link fw-bold text-dark px-3" href="/logout">Log out</a>
                 <% } %>
             </div>
 
