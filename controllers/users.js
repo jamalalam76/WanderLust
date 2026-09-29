@@ -3,6 +3,10 @@ const User = require("../models/user");
 const passport = require("passport");
 
 module.exports.renderSignup = (req, res) => {
+  if (req.isAuthenticated()) {
+    req.flash("error", "You are already logged in!");
+    return res.redirect("/listings");
+  }
   res.render("users/signup.ejs");
 };
 
@@ -31,6 +35,10 @@ module.exports.signup = async (req, res, next) => {
 };
 
 module.exports.renderLogin = (req, res) => {
+  if (req.isAuthenticated()) {
+    req.flash("error", "You are already logged in!");
+    return res.redirect("/listings");
+  }
   res.render("users/login.ejs");
 };
 
