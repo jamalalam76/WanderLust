@@ -6,8 +6,9 @@ const mongoose = require("mongoose");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    // Provide fallback demo user so user can post reviews and test without login block
-    req.user = { _id: "demo_user_id", username: "Jane Doe", email: "demo@wanderlust.com" };
+    req.session.redirectUrl = req.originalUrl;
+    req.flash("error", "You must be logged in to create listing!");
+    return res.redirect("/login");
   }
   next();
 };
