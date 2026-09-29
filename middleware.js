@@ -7,7 +7,13 @@ const mongoose = require("mongoose");
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
-    req.flash("error", "You must be logged in to create listing!");
+    let msg = "You must be logged in!";
+    if (req.originalUrl && req.originalUrl.includes("/edit")) {
+      msg = "You must be logged in to edit listing!";
+    } else if (req.originalUrl && (req.originalUrl.includes("/new") || req.method === "POST")) {
+      msg = "You must be logged in to create listing!";
+    }
+    req.flash("error", msg);
     return res.redirect("/login");
   }
   next();
