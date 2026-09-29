@@ -12,13 +12,17 @@ module.exports.signup = async (req, res, next) => {
 
     if (mongoose.connection.readyState === 1) {
       const newUser = new User({ email, username });
-      await User.register(newUser, password);
-      req.flash("success", "Account created successfully! Please log in to continue.");
-      return res.redirect("/login");
+      const registeredUser = await User.register(newUser, password);
+      req.login(registeredUser, (err) => {
+        if (err) return next(err);
+        req.flash("success", "Welcome to Wanderlust!");
+        return res.redirect("/listings");
+      });
+      return;
     }
 
     // Demo Mode Fallback Signup (when DB not connected)
-    req.flash("success", `Account for "${username || 'demouser'}" created successfully! Please log in.`);
+    req.flash("success", "Welcome to Wanderlust!");
     res.redirect("/login");
   } catch (e) {
     req.flash("error", e.message);
@@ -43,7 +47,7 @@ module.exports.login = (req, res, next) => {
     demoUser._id = "demo_user_id";
     return req.login(demoUser, (loginErr) => {
       if (loginErr) return next(loginErr);
-      req.flash("success", `Welcome back to WanderLust, ${demoUser.username}!`);
+      req.flash("success", "Welcome back to Wanderlust!");
       let redirectUrl = res.locals.redirectUrl || "/listings";
       res.redirect(redirectUrl);
     });
@@ -65,7 +69,7 @@ module.exports.login = (req, res, next) => {
         }
         req.login(authenticatedUser, (loginErr) => {
           if (loginErr) return next(loginErr);
-          req.flash("success", `Welcome back to WanderLust, ${authenticatedUser.username}!`);
+          req.flash("success", "Welcome back to Wanderlust!");
           let redirectUrl = res.locals.redirectUrl || "/listings";
           res.redirect(redirectUrl);
         });
@@ -83,7 +87,7 @@ module.exports.logout = (req, res, next) => {
     if (err) {
       return next(err);
     }
-    req.flash("success", "You are logged out!");
+    req.flash("success", "you are logged out!");
     res.redirect("/listings");
   });
 };
