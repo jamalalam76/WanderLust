@@ -33,14 +33,13 @@ router
   .route("/:id")
   .get(wrapAsync(listingController.showListing))
   .put(
-    isLoggedIn,
     isOwner,
     uploadWithFallback,
     validateListing,
     wrapAsync(listingController.updateListing)
   )
-  .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
+  .delete(isOwner, wrapAsync(listingController.destroyListing));
 
-router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm));
+router.get("/:id/edit", isOwner, wrapAsync(listingController.renderEditForm));
 
 module.exports = router;

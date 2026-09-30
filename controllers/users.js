@@ -49,8 +49,8 @@ module.exports.login = (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     // Demo Mode Fallback Login (when DB not connected)
     const demoUser = new User({
-      email: "demo@wanderlust.com",
-      username: username || "demouser"
+      email: "jamal@wanderlust.com",
+      username: username || "Jamal Ashraf"
     });
     demoUser._id = "demo_user_id";
     return req.login(demoUser, (loginErr) => {

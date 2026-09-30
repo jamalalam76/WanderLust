@@ -28,35 +28,138 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 
 module.exports.isOwner = async (req, res, next) => {
   let { id } = req.params;
-  if (!id || id.startsWith("demo_") || mongoose.connection.readyState !== 1 || !mongoose.Types.ObjectId.isValid(id)) {
-    return next();
+  const currUser = res.locals.currentUser;
+
+  if (!currUser) {
+    req.flash("error", "You are not owner of this listing!");
+    return res.redirect(`/listings/${id}`);
   }
-  try {
-    let listing = await Listing.findById(id);
-    if (listing && listing.owner && res.locals.currentUser && !listing.owner.equals(res.locals.currentUser._id)) {
-      req.flash("error", "You don't have permission to modify this listing!");
+
+  let listing = null;
+  if (mongoose.connection.readyState === 1 && !id.startsWith("demo_") && mongoose.Types.ObjectId.isValid(id)) {
+    try {
+      listing = await Listing.findById(id).populate("owner");
+    } catch (err) {
+      console.log("isOwner DB error:", err.message);
+    }
+  }
+
+  if (!listing) {
+    try {
+      const listingsController = require("./controllers/listings");
+      if (listingsController.demoCreatedListings) {
+        listing = listingsController.demoCreatedListings.find((l) => l._id === id);
+      }
+      if (!listing && typeof listingsController.getFallbackListings === "function") {
+        const fallbacks = listingsController.getFallbackListings();
+        listing = fallbacks.find((l) => l._id === id);
+      }
+    } catch (err) {
+      console.log("isOwner fallback error:", err.message);
+    }
+  }
+
+  if (listing && listing.owner) {
+    if ((typeof listing.owner !== "object" || !listing.owner.username) && mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(listing.owner)) {
+      try {
+        const ownerDoc = await User.findById(listing.owner);
+        if (ownerDoc) listing.owner = ownerDoc;
+      } catch (e) {}
+    }
+
+    let isMatch = false;
+
+    const currId = currUser._id ? currUser._id.toString() : null;
+    const currUsername = currUser.username ? currUser.username.trim().toLowerCase() : null;
+
+    let ownerId = null;
+    let ownerUsername = null;
+
+    if (typeof listing.owner === "object") {
+      ownerId = listing.owner._id ? listing.owner._id.toString() : null;
+      ownerUsername = listing.owner.username ? listing.owner.username.trim().toLowerCase() : null;
+    } else if (listing.owner) {
+      ownerId = listing.owner.toString();
+    }
+
+    if (currId && ownerId && currId === ownerId) {
+      isMatch = true;
+    } else if (currUsername && ownerUsername && currUsername === ownerUsername) {
+      isMatch = true;
+    }
+
+    if (!isMatch) {
+      req.flash("error", "You are not owner of this listing!");
       return res.redirect(`/listings/${id}`);
     }
-  } catch (err) {
-    console.log("isOwner check error:", err.message);
+  } else {
+    req.flash("error", "You are not owner of this listing!");
+    return res.redirect(`/listings/${id}`);
   }
+
   next();
 };
 
 module.exports.isReviewAuthor = async (req, res, next) => {
   let { id, reviewId } = req.params;
-  if (!reviewId || reviewId.startsWith("demo_") || mongoose.connection.readyState !== 1 || !mongoose.Types.ObjectId.isValid(reviewId)) {
-    return next();
+  const currUser = res.locals.currentUser;
+
+  if (!currUser) {
+    req.flash("error", "You must be logged in to delete a review!");
+    return res.redirect(`/listings/${id}`);
   }
-  try {
-    let review = await Review.findById(reviewId);
-    if (review && review.author && res.locals.currentUser && !review.author.equals(res.locals.currentUser._id)) {
+
+  let review = null;
+  if (mongoose.connection.readyState === 1 && !reviewId.startsWith("demo_") && mongoose.Types.ObjectId.isValid(reviewId)) {
+    try {
+      review = await Review.findById(reviewId).populate("author");
+    } catch (err) {
+      console.log("isReviewAuthor DB error:", err.message);
+    }
+  }
+
+  if (!review) {
+    try {
+      const reviewsController = require("./controllers/reviews");
+      if (reviewsController.demoReviewsMap && reviewsController.demoReviewsMap[id]) {
+        review = reviewsController.demoReviewsMap[id].find((r) => r._id === reviewId);
+      }
+    } catch (err) {
+      console.log("isReviewAuthor fallback error:", err.message);
+    }
+  }
+
+  if (review && review.author) {
+    let isMatch = false;
+
+    const currId = currUser._id ? currUser._id.toString() : null;
+    const currUsername = currUser.username ? currUser.username.trim().toLowerCase() : null;
+
+    let authorId = null;
+    let authorUsername = null;
+
+    if (typeof review.author === "object") {
+      authorId = review.author._id ? review.author._id.toString() : null;
+      authorUsername = review.author.username ? review.author.username.trim().toLowerCase() : null;
+    } else if (review.author) {
+      authorId = review.author.toString();
+    }
+
+    if (currId && authorId && currId === authorId) {
+      isMatch = true;
+    } else if (currUsername && authorUsername && currUsername === authorUsername) {
+      isMatch = true;
+    }
+
+    if (!isMatch) {
       req.flash("error", "You are not the author of this review!");
       return res.redirect(`/listings/${id}`);
     }
-  } catch (err) {
-    console.log("isReviewAuthor check error:", err.message);
+  } else {
+    req.flash("error", "You are not the author of this review!");
+    return res.redirect(`/listings/${id}`);
   }
+
   next();
 };
 

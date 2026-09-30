@@ -65,17 +65,17 @@ const cityCoords = {
 
 const initDB = async (closeConn = true) => {
   await Listing.deleteMany({});
-  await User.deleteMany({ username: "demouser" });
+  await User.deleteMany({ username: { $in: ["demouser", "Jamal Sharaf", "jamal_sharaf", "Jamal Ashraf"] } });
 
   // Create default admin/host user
   let registeredUser;
-  const existingUser = await User.findOne({ username: "demouser" });
+  const existingUser = await User.findOne({ username: "Jamal Ashraf" });
   if (existingUser) {
     registeredUser = existingUser;
   } else {
     const demoUser = new User({
-      email: "demo@wanderlust.com",
-      username: "demouser",
+      email: "jamal@wanderlust.com",
+      username: "Jamal Ashraf",
     });
     registeredUser = await User.register(demoUser, "demo123");
   }

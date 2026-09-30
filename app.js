@@ -82,8 +82,8 @@ passport.serializeUser((user, done) => {
   } else {
     done(null, {
       _id: (user && user._id) ? user._id : "demo_user_id",
-      username: (user && user.username) ? user.username : "demouser",
-      email: (user && user.email) ? user.email : "demo@wanderlust.com"
+      username: (user && user.username) ? user.username : "Jamal Ashraf",
+      email: (user && user.email) ? user.email : "jamal@wanderlust.com"
     });
   }
 });
@@ -99,8 +99,8 @@ passport.deserializeUser(async (idOrUser, done) => {
     if (typeof idOrUser === "string" && idOrUser.startsWith("demo_")) {
       const demoDoc = new User({
         _id: idOrUser,
-        username: "demouser",
-        email: "demo@wanderlust.com"
+        username: "Jamal Ashraf",
+        email: "jamal@wanderlust.com"
       });
       demoDoc._id = idOrUser;
       return done(null, demoDoc);
@@ -115,15 +115,15 @@ passport.deserializeUser(async (idOrUser, done) => {
 
     // Fallback Mongoose document instance
     const fallbackUser = new User({
-      email: "demo@wanderlust.com",
-      username: "demouser"
+      email: "jamal@wanderlust.com",
+      username: "Jamal Ashraf"
     });
     done(null, fallbackUser);
   } catch (err) {
     console.log("Deserialize User Error:", err.message);
     const fallbackUser = new User({
-      email: "demo@wanderlust.com",
-      username: "demouser"
+      email: "jamal@wanderlust.com",
+      username: "Jamal Ashraf"
     });
     done(null, fallbackUser);
   }

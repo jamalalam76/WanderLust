@@ -73,7 +73,7 @@ const getFallbackListings = (query = {}) => {
       price: item.price,
       location: item.location,
       country: item.country,
-      owner: { username: "demouser", email: "demo@wanderlust.com" },
+      owner: { username: "Jamal Ashraf", email: "jamal@wanderlust.com" },
       category: cat,
       reviews: [...defaultSampleReviews, ...extraReviews],
       amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Pool"],
@@ -225,8 +225,9 @@ module.exports.createListing = async (req, res) => {
     country: listingData.country || "",
     category: listingData.category || "Trending",
     owner: { 
-      username: (req.user && req.user.username) ? req.user.username : "demouser", 
-      email: (req.user && req.user.email) ? req.user.email : "demo@wanderlust.com" 
+      _id: (req.user && req.user._id) ? req.user._id : "demo_user_id",
+      username: (req.user && req.user.username) ? req.user.username : "Jamal Ashraf", 
+      email: (req.user && req.user.email) ? req.user.email : "jamal@wanderlust.com" 
     },
     reviews: [...defaultSampleReviews],
     amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen"],
@@ -238,7 +239,7 @@ module.exports.createListing = async (req, res) => {
       const newListing = new Listing(listingData);
       newListing.image = { url, filename };
 
-      if (req.user && req.user._id && mongoose.Types.ObjectId.isValid(req.user._id) && !req.user._id.toString().startsWith("demo_")) {
+      if (req.user && req.user._id) {
         newListing.owner = req.user._id;
       }
 
@@ -339,3 +340,6 @@ module.exports.destroyListing = async (req, res) => {
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
 };
+
+module.exports.demoCreatedListings = demoCreatedListings;
+module.exports.getFallbackListings = getFallbackListings;
