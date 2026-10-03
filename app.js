@@ -25,7 +25,7 @@ const paymentRouter = require("./routes/payment.js");
 const aiRouter = require("./routes/ai.js");
 
 // Database URL from Environment Variable or Local MongoDB
-const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/tripnova";
 
 async function main() {
   try {
@@ -83,7 +83,7 @@ passport.serializeUser((user, done) => {
     done(null, {
       _id: (user && user._id) ? user._id : "demo_user_id",
       username: (user && user.username) ? user.username : "Jamal Ashraf",
-      email: (user && user.email) ? user.email : "jamal@wanderlust.com"
+      email: (user && user.email) ? user.email : "jamalalam7935@gmail.com"
     });
   }
 });
@@ -100,7 +100,7 @@ passport.deserializeUser(async (idOrUser, done) => {
       const demoDoc = new User({
         _id: idOrUser,
         username: "Jamal Ashraf",
-        email: "jamal@wanderlust.com"
+        email: "jamalalam7935@gmail.com"
       });
       demoDoc._id = idOrUser;
       return done(null, demoDoc);
@@ -115,14 +115,14 @@ passport.deserializeUser(async (idOrUser, done) => {
 
     // Fallback Mongoose document instance
     const fallbackUser = new User({
-      email: "jamal@wanderlust.com",
+      email: "jamalalam7935@gmail.com",
       username: "Jamal Ashraf"
     });
     done(null, fallbackUser);
   } catch (err) {
     console.log("Deserialize User Error:", err.message);
     const fallbackUser = new User({
-      email: "jamal@wanderlust.com",
+      email: "jamalalam7935@gmail.com",
       username: "Jamal Ashraf"
     });
     done(null, fallbackUser);
@@ -145,6 +145,12 @@ app.get("/", (req, res) => {
   res.redirect("/signup");
 });
 
+// Footer Information Routes
+app.get("/privacy", (req, res) => res.redirect("/listings?modal=privacy"));
+app.get("/terms", (req, res) => res.redirect("/listings?modal=terms"));
+app.get("/sitemap", (req, res) => res.redirect("/listings?modal=sitemap"));
+app.get("/company-details", (req, res) => res.redirect("/listings?modal=company"));
+
 // Modular Routes
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
@@ -165,5 +171,5 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(`Wanderlust server is running on port ${port}`);
+  console.log(`TripNova AI server is running on port ${port}`);
 });

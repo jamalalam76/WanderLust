@@ -19,14 +19,14 @@ module.exports.signup = async (req, res, next) => {
       const registeredUser = await User.register(newUser, password);
       req.login(registeredUser, (err) => {
         if (err) return next(err);
-        req.flash("success", "Welcome to Wanderlust!");
+        req.flash("success", "Welcome to TripNova AI!");
         return res.redirect("/listings");
       });
       return;
     }
 
     // Demo Mode Fallback Signup (when DB not connected)
-    req.flash("success", "Welcome to Wanderlust!");
+    req.flash("success", "Welcome to TripNova AI!");
     res.redirect("/login");
   } catch (e) {
     req.flash("error", e.message);
@@ -49,13 +49,13 @@ module.exports.login = (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     // Demo Mode Fallback Login (when DB not connected)
     const demoUser = new User({
-      email: "jamal@wanderlust.com",
+      email: "jamalalam7935@gmail.com",
       username: username || "Jamal Ashraf"
     });
     demoUser._id = "demo_user_id";
     return req.login(demoUser, (loginErr) => {
       if (loginErr) return next(loginErr);
-      req.flash("success", "Welcome back to Wanderlust!");
+      req.flash("success", "Welcome back to TripNova AI!");
       let redirectUrl = res.locals.redirectUrl || "/listings";
       res.redirect(redirectUrl);
     });
@@ -77,7 +77,7 @@ module.exports.login = (req, res, next) => {
         }
         req.login(authenticatedUser, (loginErr) => {
           if (loginErr) return next(loginErr);
-          req.flash("success", "Welcome back to Wanderlust!");
+          req.flash("success", "Welcome back to TripNova AI!");
           let redirectUrl = res.locals.redirectUrl || "/listings";
           res.redirect(redirectUrl);
         });

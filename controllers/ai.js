@@ -1,4 +1,4 @@
-const { generateAIDescription, generateWanderBotResponse, summarizeReviewsAI, predictAIImage } = require("../utils/aiHelper");
+const { generateAIDescription, generateTripNovaBotResponse, summarizeReviewsAI, predictAIImage } = require("../utils/aiHelper");
 
 module.exports.generateDescription = async (req, res) => {
   try {
@@ -11,14 +11,14 @@ module.exports.generateDescription = async (req, res) => {
   }
 };
 
-module.exports.chatWithWanderBot = async (req, res) => {
+module.exports.chatWithTripNovaBot = async (req, res) => {
   try {
     const { message, listingContext } = req.body;
-    const reply = await generateWanderBotResponse(message, listingContext);
+    const reply = await generateTripNovaBotResponse(message, listingContext);
     res.json({ success: true, reply });
   } catch (error) {
     console.error("AI Chat Error:", error);
-    res.status(500).json({ success: false, message: "WanderBot AI encountered an issue" });
+    res.status(500).json({ success: false, message: "TripNova AI encountered an issue" });
   }
 };
 

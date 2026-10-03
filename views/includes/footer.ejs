@@ -4,13 +4,13 @@
             
             <div class="col-md-6 mb-3 mb-md-0">
                 <div class="f-info-brand text-muted">
-                    &copy; <%= new Date().getFullYear() %> <b>Wanderlust Private Limited</b>. All rights reserved.
+                    &copy; <%= new Date().getFullYear() %> <b>TripNova AI Technologies</b>. All rights reserved.
                 </div>
                 <div class="f-info-links mt-1">
-                    <a href="#" class="text-decoration-none text-muted me-3 hover-underline">Privacy</a> &middot;
-                    <a href="#" class="text-decoration-none text-muted mx-3 hover-underline">Terms</a> &middot;
-                    <a href="#" class="text-decoration-none text-muted mx-3 hover-underline">Sitemap</a> &middot;
-                    <a href="#" class="text-decoration-none text-muted ms-3 hover-underline">Company Details</a>
+                    <a href="#privacyModal" data-bs-toggle="modal" class="text-decoration-none text-muted me-3 hover-underline cursor-pointer">Privacy</a> &middot;
+                    <a href="#termsModal" data-bs-toggle="modal" class="text-decoration-none text-muted mx-3 hover-underline cursor-pointer">Terms</a> &middot;
+                    <a href="#sitemapModal" data-bs-toggle="modal" class="text-decoration-none text-muted mx-3 hover-underline cursor-pointer">Sitemap</a> &middot;
+                    <a href="#companyModal" data-bs-toggle="modal" class="text-decoration-none text-muted ms-3 hover-underline cursor-pointer">Company Details</a>
                 </div>
             </div>
 
@@ -29,3 +29,184 @@
         </div>
     </div>
 </footer>
+
+<!-- 1. Privacy Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4 p-3 px-4">
+        <h5 class="modal-title fw-bold mb-0 d-flex align-items-center gap-2" id="privacyModalLabel">
+          <i class="fa-solid fa-shield-halved text-danger fs-4"></i>
+          TripNova AI Privacy Policy
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-dark fs-6 lh-base">
+        <p class="text-muted small mb-4">Last Updated: October 2026 &bull; TripNova AI Technologies Pvt. Ltd.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-lock me-2"></i>1. Data Collection & Protection</h6>
+        <p class="mb-3 text-secondary">At TripNova AI, we respect your privacy. We collect minimal user information (name, email address, and booking preferences) necessary to process stay reservations and deliver personalized travel experiences. All personal data is stored securely using industry-standard SSL 256-bit encryption.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-robot me-2"></i>2. AI Concierge & Data Usage</h6>
+        <p class="mb-3 text-secondary">Our built-in Gemini 2.5 AI assistant processes search terms and stay requests in real-time to offer smart itineraries, travel guides, and property descriptions. We do not sell or share your personal chat interactions with third-party advertisers.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-credit-card me-2"></i>3. Payment Security</h6>
+        <p class="mb-3 text-secondary">Payment transactions are executed securely via Razorpay payment gateway infrastructure. TripNova AI does not store sensitive credit card numbers or banking passwords on our servers.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-cookie-bite me-2"></i>4. Cookies & Preferences</h6>
+        <p class="mb-0 text-secondary">We use essential session cookies to keep you logged in securely and remember your preferred stay filters across browsing sessions.</p>
+      </div>
+      <div class="modal-footer bg-light border-top-0 rounded-bottom-4 p-3">
+        <button type="button" class="btn btn-dark rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Terms & Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4 p-3 px-4">
+        <h5 class="modal-title fw-bold mb-0 d-flex align-items-center gap-2" id="termsModalLabel">
+          <i class="fa-solid fa-file-contract text-danger fs-4"></i>
+          TripNova AI Terms & Conditions
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-dark fs-6 lh-base">
+        <p class="text-muted small mb-4">Effective Date: October 2026 &bull; User Agreement</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-user-check me-2"></i>1. Guest & Host Responsibilities</h6>
+        <p class="mb-3 text-secondary">Guests must provide accurate registration details during account creation. Hosts are required to maintain true listing details, pricing, and high standards of cleanliness and safety for listed properties.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-calendar-check me-2"></i>2. Booking & Cancellation Rules</h6>
+        <p class="mb-3 text-secondary">Full booking confirmation is issued instantly upon payment authorization. Cancellations made 48 hours prior to check-in are eligible for a 100% full refund.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>3. Acceptable Use of AI Features</h6>
+        <p class="mb-3 text-secondary">The TripNova AI Concierge is intended to assist users with travel planning, local recommendations, and stay assistance. Automated scraping or misuse of the AI chatbot is strictly prohibited.</p>
+
+        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-scale-balanced me-2"></i>4. Governing Law</h6>
+        <p class="mb-0 text-secondary">These terms are governed by and construed in accordance with the laws of India. Any disputes will be handled within the jurisdiction of New Delhi, India.</p>
+      </div>
+      <div class="modal-footer bg-light border-top-0 rounded-bottom-4 p-3">
+        <button type="button" class="btn btn-dark rounded-pill px-4" data-bs-dismiss="modal">I Understand</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Sitemap Modal -->
+<div class="modal fade" id="sitemapModal" tabindex="-1" aria-labelledby="sitemapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4 p-3 px-4">
+        <h5 class="modal-title fw-bold mb-0 d-flex align-items-center gap-2" id="sitemapModalLabel">
+          <i class="fa-solid fa-sitemap text-danger fs-4"></i>
+          TripNova AI - Website Sitemap
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-dark">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card h-100 border-0 bg-light p-3 rounded-4">
+              <h6 class="fw-bold text-danger mb-3"><i class="fa-solid fa-compass me-2"></i>Explore Stays & Categories</h6>
+              <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-secondary">
+                <li><a href="/listings" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-hotel me-2 text-danger"></i>All Listings & Rooms</a></li>
+                <li><a href="/listings?category=Beachfront" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-umbrella-beach me-2 text-primary"></i>Beachfront Villas</a></li>
+                <li><a href="/listings?category=Mountains" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-mountain me-2 text-success"></i>Mountain Chalets</a></li>
+                <li><a href="/listings?category=Iconic+Cities" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-city me-2 text-warning"></i>Iconic City Stays</a></li>
+                <li><a href="/listings?category=Amazing+Pools" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-water-ladder me-2 text-info"></i>Amazing Pool Villas</a></li>
+                <li><a href="/listings?category=Castles" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-chess-rook me-2 text-danger"></i>Historic Castles</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card h-100 border-0 bg-light p-3 rounded-4">
+              <h6 class="fw-bold text-danger mb-3"><i class="fa-solid fa-robot me-2"></i>AI Features & Host Tools</h6>
+              <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-secondary">
+                <li><a href="/listings/new" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-circle-plus me-2 text-danger"></i>Host & Create New Stay</a></li>
+                <li><a href="#" onclick="if(typeof toggleTripNovaBotWindow === 'function') toggleTripNovaBotWindow(); return false;" class="text-decoration-none text-dark hover-underline" data-bs-dismiss="modal"><i class="fa-solid fa-wand-magic-sparkles me-2 text-warning"></i>TripNova AI Concierge Chat</a></li>
+                <li><a href="/signup" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-user-plus me-2 text-success"></i>User Registration</a></li>
+                <li><a href="/login" class="text-decoration-none text-dark hover-underline"><i class="fa-solid fa-right-to-bracket me-2 text-primary"></i>User Login</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-light border-top-0 rounded-bottom-4 p-3">
+        <button type="button" class="btn btn-dark rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Company Details Modal -->
+<div class="modal fade" id="companyModal" tabindex="-1" aria-labelledby="companyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4 p-3 px-4">
+        <h5 class="modal-title fw-bold mb-0 d-flex align-items-center gap-2" id="companyModalLabel">
+          <i class="fa-solid fa-building text-danger fs-4"></i>
+          Company Details - TripNova AI
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-dark">
+        <div class="row align-items-center g-4">
+          <div class="col-md-7">
+            <h4 class="fw-bold mb-1 text-gradient">TripNova AI Technologies</h4>
+            <p class="text-muted small mb-3">AI-Powered Travel & Smart Stay Reservations</p>
+
+            <div class="d-flex flex-column gap-2 text-secondary mb-4">
+              <div><i class="fa-solid fa-user-tie text-danger me-2"></i><b>Founder & CEO:</b> Jamal Ashraf</div>
+              <div><i class="fa-solid fa-location-dot text-danger me-2"></i><b>Headquarters:</b> New Delhi, India 🇮🇳</div>
+              <div><i class="fa-solid fa-envelope text-danger me-2"></i><b>Official Support Email:</b> <a href="mailto:jamalalam7935@gmail.com" class="text-decoration-none text-dark fw-semibold">jamalalam7935@gmail.com</a></div>
+              <div><i class="fa-solid fa-headset text-danger me-2"></i><b>Support Line:</b> +91 7494043978</div>
+              <div><i class="fa-solid fa-globe text-danger me-2"></i><b>Website:</b> <a href="http://localhost:8080/listings" class="text-decoration-none text-dark fw-semibold">www.tripnova.ai</a></div>
+            </div>
+
+            <p class="mb-0 text-muted small lh-base">
+              TripNova AI Technologies Pvt. Ltd. is an innovative travel-tech platform pioneering Gemini 2.5 AI integration for instant stay curation, automated property description generation, smart packing recommendations, and 24/7 guest support.
+            </p>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card border-0 bg-light p-4 rounded-4 text-center shadow-sm">
+              <i class="fa-solid fa-wand-magic-sparkles text-danger display-4 mb-3"></i>
+              <h5 class="fw-bold mb-2">Connect With Us</h5>
+              <p class="text-muted small mb-3">Follow our social channels for travel inspiration & exclusive discounts!</p>
+
+              <div class="d-flex justify-content-center gap-3 fs-3 text-dark mb-2">
+                <a href="https://www.facebook.com/share/1DgPkxVq5n/" target="_blank" rel="noopener noreferrer" class="text-dark hover-icon" title="Facebook"><i class="fa-brands fa-square-facebook"></i></a>
+                <a href="https://www.instagram.com/ashraf__jamal07?stkn=dmxlbzVpbHNmNXNm" target="_blank" rel="noopener noreferrer" class="text-dark hover-icon" title="Instagram"><i class="fa-brands fa-square-instagram"></i></a>
+                <a href="#" class="text-dark hover-icon" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" class="text-dark hover-icon" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-light border-top-0 rounded-bottom-4 p-3">
+        <button type="button" class="btn btn-dark rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const modalParam = urlParams.get("modal");
+    if (modalParam) {
+      const modalId = modalParam + "Modal";
+      const targetModalEl = document.getElementById(modalId);
+      if (targetModalEl && typeof bootstrap !== "undefined") {
+        const bsModal = new bootstrap.Modal(targetModalEl);
+        bsModal.show();
+      }
+    }
+  });
+</script>

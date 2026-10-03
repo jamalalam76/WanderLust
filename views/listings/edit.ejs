@@ -11,9 +11,10 @@
     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" enctype="multipart/form-data">
 
       <div class="mb-3">
-        <label class="form-label fw-semibold">Title</label>
+        <label for="title" class="form-label fw-semibold">Title</label>
         <input
           name="listing[title]"
+          id="listingTitle"
           value="<%= listing.title %>"
           type="text"
           class="form-control"
@@ -23,37 +24,72 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-semibold">Description</label>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label for="description" class="form-label fw-semibold mb-0">Description</label>
+          <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="generateDescriptionWithAI()">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate with AI
+          </button>
+        </div>
         <textarea
           name="listing[description]"
+          id="listingDescription"
           class="form-control"
           required
           rows="4"
           placeholder="Enter description"
         ><%= listing.description %></textarea>
+        <div id="aiStatus" class="small text-danger fw-semibold mt-1 display-none">
+          <i class="fa-solid fa-circle-notch fa-spin me-1"></i> Generating AI description...
+        </div>
         <div class="invalid-feedback">Please enter a short description</div>
       </div>
 
-      <!-- Current Image Preview -->
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Original Listing Image</label><br>
-        <img src="<%= listing.image && listing.image.url ? listing.image.url : '' %>" alt="listing_image" class="rounded-3 shadow-sm" style="height: 150px; object-fit: cover;">
-      </div>
+      <!-- Listing Image Box with AI Prediction Support -->
+      <div class="mb-3 p-3 border rounded-3 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <label class="form-label fw-semibold mb-0">Listing Image</label>
+          <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="predictImageWithAI()">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI Auto-Predict Image
+          </button>
+        </div>
 
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Upload New Image (Cloudinary)</label>
+        <!-- Original Image Preview -->
+        <div class="mb-3">
+          <small class="text-muted d-block mb-1">Original Listing Image:</small>
+          <img src="<%= listing.image && listing.image.url ? listing.image.url : '' %>" alt="listing_image" class="rounded-3 shadow-sm img-thumbnail" style="height: 150px; object-fit: cover;">
+        </div>
+
+        <label for="imageFile" class="small text-muted mb-1">Option 1: Upload New Image File (Cloudinary)</label>
         <input
           name="listing[image]"
+          id="imageFile"
           type="file"
-          class="form-control"
+          class="form-control mb-2"
           accept="image/*"
         />
-        <small class="text-muted">Choose a new image file to replace the existing image on Cloudinary.</small>
+
+        <label for="listingImageUrl" class="small text-muted mb-1">Option 2: New Image URL (Or click 'AI Auto-Predict Image')</label>
+        <input
+          name="listing[imageUrl]"
+          id="listingImageUrl"
+          placeholder="Paste new image link or click 'AI Auto-Predict Image' above"
+          type="text"
+          class="form-control"
+        />
+
+        <div id="aiImageStatus" class="small text-primary fw-semibold mt-2 display-none">
+          <i class="fa-solid fa-circle-notch fa-spin me-1"></i> AI is predicting the best HD image...
+        </div>
+
+        <div id="imagePreviewContainer" class="mt-2 display-none">
+          <small class="text-muted d-block mb-1">AI Image Preview:</small>
+          <img id="imagePreview" src="" alt="AI Suggested Image" class="img-thumbnail rounded-3 shadow-sm" style="max-height: 180px; object-fit: cover;">
+        </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-semibold">Category</label>
-        <select name="listing[category]" class="form-select">
+        <label for="category" class="form-label fw-semibold">Category</label>
+        <select name="listing[category]" id="listingCategory" class="form-select">
           <option value="Trending" <%= listing.category === 'Trending' ? 'selected' : '' %>>Trending</option>
           <option value="Rooms" <%= listing.category === 'Rooms' ? 'selected' : '' %>>Rooms</option>
           <option value="Iconic Cities" <%= listing.category === 'Iconic Cities' ? 'selected' : '' %>>Iconic Cities</option>
@@ -71,7 +107,7 @@
       <div class="row">
 
         <div class="mb-3 col-md-4">
-          <label class="form-label fw-semibold">Price (&#8377;)</label>
+          <label for="price" class="form-label fw-semibold">Price (&#8377;)</label>
           <input
             name="listing[price]"
             value="<%= listing.price %>"
@@ -83,9 +119,10 @@
         </div>
 
         <div class="mb-3 col-md-8">
-          <label class="form-label fw-semibold">Country</label>
+          <label for="country" class="form-label fw-semibold">Country</label>
           <input
             name="listing[country]"
+            id="listingCountry"
             value="<%= listing.country %>"
             type="text"
             class="form-control"
@@ -97,9 +134,10 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-semibold">Location</label>
+        <label for="location" class="form-label fw-semibold">Location</label>
         <input
           name="listing[location]"
+          id="listingLocation"
           value="<%= listing.location %>"
           type="text"
           class="form-control"
@@ -117,3 +155,68 @@
 
   </div>
 </div>
+
+<script>
+  async function predictImageWithAI() {
+    const title = document.getElementById("listingTitle").value.trim();
+    const location = document.getElementById("listingLocation").value.trim();
+    const category = document.getElementById("listingCategory").value;
+    const aiImageStatus = document.getElementById("aiImageStatus");
+    const imageUrlInput = document.getElementById("listingImageUrl");
+    const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+    const imagePreview = document.getElementById("imagePreview");
+
+    aiImageStatus.style.display = "block";
+
+    try {
+      const res = await fetch("/api/ai/predict-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, location, category })
+      });
+      const data = await res.json();
+      if (data.success && data.imageUrl) {
+        imageUrlInput.value = data.imageUrl;
+        imagePreview.src = data.imageUrl;
+        imagePreviewContainer.style.display = "block";
+      } else {
+        alert("Could not predict AI image.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("AI image prediction error.");
+    } finally {
+      aiImageStatus.style.display = "none";
+    }
+  }
+
+  async function generateDescriptionWithAI() {
+    const title = document.getElementById("listingTitle").value.trim();
+    const location = document.getElementById("listingLocation").value.trim();
+    const country = document.getElementById("listingCountry").value.trim();
+    const category = document.getElementById("listingCategory").value;
+    const aiStatus = document.getElementById("aiStatus");
+    const descInput = document.getElementById("listingDescription");
+
+    aiStatus.style.display = "block";
+
+    try {
+      const res = await fetch("/api/ai/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, location, country, category })
+      });
+      const data = await res.json();
+      if (data.success && data.description) {
+        descInput.value = data.description;
+      } else {
+        alert("Could not generate AI description.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("AI generation error.");
+    } finally {
+      aiStatus.style.display = "none";
+    }
+  }
+</script>

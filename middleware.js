@@ -1,5 +1,6 @@
 const Listing = require("./models/listing");
 const Review = require("./models/review");
+const User = require("./models/user");
 const ExpressError = require("./utils/ExpressError");
 const { listingSchema, reviewSchema } = require("./schema");
 const mongoose = require("mongoose");
@@ -31,7 +32,7 @@ module.exports.isOwner = async (req, res, next) => {
   const currUser = res.locals.currentUser;
 
   if (!currUser) {
-    req.flash("error", "You are not owner of this listing!");
+    req.flash("error", "You are not owner of this project!");
     return res.redirect(`/listings/${id}`);
   }
 
@@ -59,14 +60,12 @@ module.exports.isOwner = async (req, res, next) => {
     }
   }
 
-  if (listing && listing.owner) {
-    if ((typeof listing.owner !== "object" || !listing.owner.username) && mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(listing.owner)) {
-      try {
-        const ownerDoc = await User.findById(listing.owner);
-        if (ownerDoc) listing.owner = ownerDoc;
-      } catch (e) {}
-    }
+  if (!listing) {
+    req.flash("error", "Listing requested does not exist!");
+    return res.redirect("/listings");
+  }
 
+  if (listing && listing.owner) {
     let isMatch = false;
 
     const currId = currUser._id ? currUser._id.toString() : null;
@@ -75,11 +74,26 @@ module.exports.isOwner = async (req, res, next) => {
     let ownerId = null;
     let ownerUsername = null;
 
-    if (typeof listing.owner === "object") {
-      ownerId = listing.owner._id ? listing.owner._id.toString() : null;
-      ownerUsername = listing.owner.username ? listing.owner.username.trim().toLowerCase() : null;
-    } else if (listing.owner) {
+    if (listing.owner._id) {
+      ownerId = listing.owner._id.toString();
+    } else if (typeof listing.owner === "string" || listing.owner instanceof mongoose.Types.ObjectId) {
       ownerId = listing.owner.toString();
+    }
+
+    if (listing.owner.username) {
+      ownerUsername = listing.owner.username.trim().toLowerCase();
+    }
+
+    if (!ownerUsername && ownerId && mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(ownerId)) {
+      try {
+        const ownerDoc = await User.findById(ownerId);
+        if (ownerDoc) {
+          if (ownerDoc._id) ownerId = ownerDoc._id.toString();
+          if (ownerDoc.username) ownerUsername = ownerDoc.username.trim().toLowerCase();
+        }
+      } catch (e) {
+        console.log("isOwner User lookup error:", e.message);
+      }
     }
 
     if (currId && ownerId && currId === ownerId) {
@@ -89,11 +103,11 @@ module.exports.isOwner = async (req, res, next) => {
     }
 
     if (!isMatch) {
-      req.flash("error", "You are not owner of this listing!");
+      req.flash("error", "You are not owner of this project!");
       return res.redirect(`/listings/${id}`);
     }
   } else {
-    req.flash("error", "You are not owner of this listing!");
+    req.flash("error", "You are not owner of this project!");
     return res.redirect(`/listings/${id}`);
   }
 

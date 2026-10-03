@@ -73,7 +73,7 @@ const getFallbackListings = (query = {}) => {
       price: item.price,
       location: item.location,
       country: item.country,
-      owner: { username: "Jamal Ashraf", email: "jamal@wanderlust.com" },
+      owner: { username: "Jamal Ashraf", email: "jamalalam7935@gmail.com" },
       category: cat,
       reviews: [...defaultSampleReviews, ...extraReviews],
       amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Pool"],
@@ -227,7 +227,7 @@ module.exports.createListing = async (req, res) => {
     owner: { 
       _id: (req.user && req.user._id) ? req.user._id : "demo_user_id",
       username: (req.user && req.user.username) ? req.user.username : "Jamal Ashraf", 
-      email: (req.user && req.user.email) ? req.user.email : "jamal@wanderlust.com" 
+      email: (req.user && req.user.email) ? req.user.email : "jamalalam7935@gmail.com" 
     },
     reviews: [...defaultSampleReviews],
     amenities: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen"],
@@ -295,8 +295,10 @@ module.exports.updateListing = async (req, res) => {
       if (listing) {
         if (req.file) {
           listing.image = { url: req.file.path, filename: req.file.filename };
+        } else if (req.body.listing && req.body.listing.imageUrl && typeof req.body.listing.imageUrl === "string" && req.body.listing.imageUrl.trim() !== "") {
+          listing.image = { url: req.body.listing.imageUrl.trim(), filename: "listingimage" };
         } else if (req.body.listing && typeof req.body.listing.image === "string" && req.body.listing.image.trim() !== "") {
-          listing.image = { url: req.body.listing.image, filename: "listingimage" };
+          listing.image = { url: req.body.listing.image.trim(), filename: "listingimage" };
         }
         Object.assign(listing, req.body.listing);
         await listing.save();
@@ -309,10 +311,22 @@ module.exports.updateListing = async (req, res) => {
 
   if (!updatedInDb) {
     let demoItem = demoCreatedListings.find(l => l._id === id);
+    if (!demoItem) {
+      const fallbackListings = getFallbackListings();
+      const orig = fallbackListings.find(l => l._id === id);
+      if (orig) {
+        demoItem = { ...orig };
+        demoCreatedListings.unshift(demoItem);
+      }
+    }
     if (demoItem) {
       Object.assign(demoItem, req.body.listing);
       if (req.file) {
         demoItem.image = { url: req.file.path, filename: req.file.filename };
+      } else if (req.body.listing && req.body.listing.imageUrl && typeof req.body.listing.imageUrl === "string" && req.body.listing.imageUrl.trim() !== "") {
+        demoItem.image = { url: req.body.listing.imageUrl.trim(), filename: "listingimage" };
+      } else if (req.body.listing && typeof req.body.listing.image === "string" && req.body.listing.image.trim() !== "") {
+        demoItem.image = { url: req.body.listing.image.trim(), filename: "listingimage" };
       }
     }
   }
